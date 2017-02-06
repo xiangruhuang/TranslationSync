@@ -1,5 +1,8 @@
-function [ x ] = CD( B, L, t, x0 )
+function [ x, infs, times ] = CD( B, L, t, x0 )
     %\|Bx - t\|^2_2 - mu log(1^T x)
+    infs = [];
+    times = [];
+    tic;
     x = x0;
     [num_edges, n] = size(B);
     deg = full(diag(L));
@@ -43,7 +46,9 @@ function [ x ] = CD( B, L, t, x0 )
         end
         z = mean(x)/n;
         x = x - z;
-        fprintf('iter=%d, inf_norm=%f\n', time, norm(x, 'inf'));
+%         fprintf('iter=%d, inf_norm=%f\n', time, norm(x, 'inf'));
+        infs = [infs; norm(x, 'inf')];
+        times = [times; toc];
 %         disp('==================================================================\n');
     end
 end
