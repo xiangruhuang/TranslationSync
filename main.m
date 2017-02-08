@@ -1,54 +1,102 @@
-n = 2000;
-sigma = 1e-3;
-error_rate = 0.1; p = 1-error_rate;
-sigma_t = sqrt(p*sigma^2 + (1.0-p)/3.0);
+% sigma = 0.00;
+% % error_rate = 0.9; p = 1-error_rate;
+% % sigma_t = sqrt(p*sigma^2 + (1.0-p)/3.0);
+% num_experiments = 1;
+% c = 2; % success prob. >= 1-n^{-c}
+
+initialize;
+
+sample_setting.sigma = 0.0;
+
 num_experiments = 100;
-c = 2; % success prob. >= 1-n^{-c}
-type = 1;
-% 
-fprintf('generating graph: type %d...', type);
-B = make_graph(type);
-fprintf('done.\n');
-L = B'*B;
-% LL = full(L);
-% Ld = pinv(LL);
-% max_eig = max(eig(Ld));
-% max_diag = max(diag(Ld));
-% delta = sqrt((c+1)*log(n)*max_diag/2.0)*sigma_t;
-% upper_delta = sqrt((c+1)*log(n)*max_eig/2.0)*sigma_t;
-
-% B = make_graph(type);
-% L = B'*B;
-num_edges = size(B, 1);
-
-result_CG = [];
-result_CD = [];
-observations = [];
-infs_CG = [];
-infs_CD = [];
-times_CG = [];
-times_CD = [];
-for i = 1:num_experiments
+dir = './results';
+for graph_type = 1:4
+    %load graph, process
+    graph_name = strcat(['Graph_',num2str(graph_type)]);
+    load(strcat([graph_name, '.mat']));
+    params = graph_params{graph.type};
+    experiment.graph_name = graph_name;
+    experiment.graph_params = params;
+    dir = strcat([dir, '/', graph_name]);
     
-    t = make_observations(num_edges, sigma, p);
-    observations = [observations t];
-    x0 = randn(n, 1);
-
-%     [x1, infs, times] = theirCG(L, B'*t, x0);
-%     infs_CG = [infs_CG infs];
-%     times_CG = [times_CG times];
-%     result_CG = [result_CG norm(x1, 'inf')];
-
-%     [x2, infs, times] = CD(B, L, t, x0);
-%     infs_CD = [infs_CD infs];
-%     times_CD = [times_CD times];
-%     result_CD = [result_CD norm(x2, 'inf')];
-    
-    x3 = IPM(B, t, x0);
-
-%     fprintf('experiment %d: %f (CG), %f (CD)\n', i, norm(x1, 'inf'), norm(x2, 'inf'));
-%     save('type1.mat');
+    %perform experiments
+    for error_rate = 0.8:-0.01:0.2
+        fprintf('Error Rate=%f\n', error_rate);
+        sample_setting.error_rate = error_rate;
+        
+        dir2 = strcat([dir, '_p_', num2str(1.0-error_rate)]);
+        if exist(dir2, 'dir') ~= 7
+            mkdir(dir2);
+        else
+            continue;
+        end
+        M = 20;
+%         experiments = cell(M, 1);
+        data = cell(M, 1);
+        TL2 = cell(M, 1);
+        CD = cell(M, 1);
+        for T = 1:(num_experiments/M)
+            parfor (TT = 1:M, 5)
+                data{TT} = make_data(graph, sample_setting);
+                TL2{TT} = Truncated_L2(graph, data{TT}, false);
+                CD{TT} = CoordinateDescent(graph, data{TT}, false);
+            end
+            for TT = 1:M
+                experiment.TL2 = TL2{TT};
+                experiment.CD = CD{TT};
+                experiment.sample_setting = sample_setting;
+                save(strcat([dir2, '/', num2str(TT+(T-1)*M), '.mat']), 'experiment');
+            end
+        end
+        parfor T = 1:num_experiments
+            data{T} = make_data(graph, sample_setting);
+%             run(graph, sample_setting, T, dir2);
+        end
+        
+        
+        parfor (T = 1:num_experiments, 5)
+%             data{T} = make_data(graph, sample_setting);
+            
+%             Truncated_L2(graph, data{T});
+%             run(dir2);
+        end
+        fprintf('\n');
+    end
 end
+
+% 
+% result_CG = [];
+% result_CD = [];
+% observations = [];
+% infs_CG = [];
+% infs_CD = [];
+% times_CG = [];
+% times_CD = [];
+% for error_rate=0.7
+%     fprintf('error_rate=%f\n', error_rate);
+%     par = 1.0 - error_rate;
+%     t = make_observations(num_edges, sigma, par);
+% %     observations = [observations t];
+% %     x0 = randn(n, 1)+1.0;
+%     x0 = zeros(n, 1);
+% %     hold on;
+% %     h1 = figure;
+% %     [x1, history1] = theirCG(L, B'*t, x0);
+%     [x1] = Truncated_L2(B, t, x0, 1, 0.95);
+% %     disp(norm(x1, 'inf'));
+% %     plot(history1.time, history1.error_inf);
+% 
+% %     h2 = figure;
+%     [x2, history2] = CD(B, L, t, x0);
+% %     plot(history2.time, history2.error_inf);
+% 
+% %     [x3, history3] = IPM(L, B'*t, x0);
+% %     plot(history3.time, history3.error_inf);
+%     
+% %     hold off;
+% %     fprintf('experiment %d: %f (CG), %f (CD)\n', i, norm(x1, 'inf'), norm(x2, 'inf'));
+% %     save('type1.mat');
+% end
 % save('type1.mat');
 % fprintf('mean_delta=%f', mean(results_us));
 % fprintf(', delta=%f (%f)', delta, mean(inf_norms < delta));

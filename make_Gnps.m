@@ -1,6 +1,14 @@
-function [ B, L ] = make_Gnps( n, p, s )
+function [ graph ] = make_Gnps( params )
+    n = params.n;
+    p = params.p;
+    s = params.s;
+    fprintf('making graph with type=%d, #nodes=%d, edge_density=%f, ', params.type, params.n, params.p);
     ok = false;
+    count = 0;
+    fprintf('#trial=    ');
     while ~ok
+        count = count + 1;
+        fprintf('\b\b\b\b%4d', count);
         a = [];
         b = [];
         v = [];
@@ -24,6 +32,10 @@ function [ B, L ] = make_Gnps( n, p, s )
         L = B'*B;
         ok = connected(L);
     end
+    graph.B = B;
+    graph.L = L;
+    graph.type = params.type;
+    fprintf('\tdone\n');
 end
 
 function ok = connected(L)
