@@ -7,20 +7,22 @@
 initialize;
 
 sample_setting.sigma = 0.0;
+verbose = false;
 
 num_experiments = 100;
-dir = './results';
 for graph_type = 1:4
     %load graph, process
     graph_name = strcat(['Graph_',num2str(graph_type)]);
     load(strcat([graph_name, '.mat']));
+    
     params = graph_params{graph.type};
+    
     experiment.graph_name = graph_name;
     experiment.graph_params = params;
-    dir = strcat([dir, '/', graph_name]);
+    dir = strcat(['./results_symmetric/', graph_name]);
     
     %perform experiments
-    for error_rate = 0.8:-0.01:0.2
+    for error_rate = 1.0:-0.01:0.0
         fprintf('Error Rate=%f\n', error_rate);
         sample_setting.error_rate = error_rate;
         
@@ -30,16 +32,15 @@ for graph_type = 1:4
         else
             continue;
         end
-        M = 20;
-%         experiments = cell(M, 1);
+        M = 100;
         data = cell(M, 1);
         TL2 = cell(M, 1);
         CD = cell(M, 1);
         for T = 1:(num_experiments/M)
-            parfor (TT = 1:M, 5)
+            parfor (TT = 1:M, 10)
                 data{TT} = make_data(graph, sample_setting);
-                TL2{TT} = Truncated_L2(graph, data{TT}, false);
-                CD{TT} = CoordinateDescent(graph, data{TT}, false);
+                TL2{TT} = Truncated_L2(graph, data{TT}, verbose);
+                CD{TT} = CoordinateDescent(graph, data{TT}, verbose);
             end
             for TT = 1:M
                 experiment.TL2 = TL2{TT};
@@ -48,19 +49,9 @@ for graph_type = 1:4
                 save(strcat([dir2, '/', num2str(TT+(T-1)*M), '.mat']), 'experiment');
             end
         end
-        parfor T = 1:num_experiments
-            data{T} = make_data(graph, sample_setting);
-%             run(graph, sample_setting, T, dir2);
+        if (verbose)
+            fprintf('\n');
         end
-        
-        
-        parfor (T = 1:num_experiments, 5)
-%             data{T} = make_data(graph, sample_setting);
-            
-%             Truncated_L2(graph, data{T});
-%             run(dir2);
-        end
-        fprintf('\n');
     end
 end
 

@@ -41,11 +41,10 @@ function CD = CoordinateDescent( graph, data, verbose )
     opt_mean = mean(xstar);
     for iter = 1:10000
         delta = 0.0;
-        for i = randperm(n)       
+        for i = randperm(n)
             x_old = x(i);
             x(i) = median(x(adj(i, 1:deg(i))) + dist(i, 1:deg(i))');
             delta = delta + abs(x(i)-x_old);
-
         end
         x = x - mean(x) + opt_mean;
         error_inf = norm(x-xstar, 'inf');
