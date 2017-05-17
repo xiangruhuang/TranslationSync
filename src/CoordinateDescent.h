@@ -34,7 +34,7 @@ class CoordinateDescent : public Solver{
             x[i] = graph.x0[i];
         }
         
-        double* new_x = new double[n];
+        double* old_x = new double[n];
 
         int iter = 0;
         double min_loss = 1e100;
@@ -48,6 +48,7 @@ class CoordinateDescent : public Solver{
         double last_update = omp_get_wtime();
         while (iter++ < max_iter){
             double up = 0.0, down = 0.0;
+            double delta_x = 0.0;
             for (int i = 0; i < n; i++){
                 vector<double> c;
                 c.clear();
@@ -58,21 +59,21 @@ class CoordinateDescent : public Solver{
                 }
                 int middle_point = c.size() / 2;
                 nth_element(c.begin(), c.begin()+middle_point, c.end());
-                new_x[i] = c[middle_point];
+                double new_x = c[middle_point];
                 if (c.size() % 2 == 0){
                     nth_element(c.begin(), c.begin()+middle_point-1, c.end());
-                    new_x[i] = 0.5*(new_x[i] + c[middle_point-1]);
+                    new_x = 0.5*(new_x + c[middle_point-1]);
                 }
-                up += new_x[i]*sqrt(d[i]);
-                down += sqrt(d[i]); 
+                up += new_x*sqrt(d[i]);
+                down += sqrt(d[i]);
+                old_x[i] = x[i];
+                x[i] = new_x;
             }
             double shift = up/down;
 
-            double delta_x = 0.0;
             for (int i = 0; i < n; i++){
-                new_x[i] -= shift;
-                delta_x += fabs(x[i] - new_x[i]);
-                x[i] = new_x[i];
+                x[i] -= shift;
+                delta_x += fabs(x[i]-old_x[i]);
             }
             double loss = linf_loss(n, x, graph.x);
 
@@ -88,14 +89,14 @@ class CoordinateDescent : public Solver{
             fout << ", min_loss=" << min_loss;
             fout << ", elapsed_time=" << elapsed_time;
             fout << endl;
-            if (fabs(min_loss) < 1e-6 || fabs(delta_x) < 1e-10 || (omp_get_wtime() - last_update > 10.0)){
+            if (fabs(min_loss) < 1e-6 || fabs(delta_x) < 1e-6 || (omp_get_wtime() - last_update > 10.0)){
                 break;
             }
         }
         fout.close();
         delete d;
         delete x;
-        delete new_x;
+        delete old_x;
         return min_loss;
     }
 };

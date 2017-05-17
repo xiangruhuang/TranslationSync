@@ -8,7 +8,7 @@ inc=0
 max_iter=10000
 noise_type=2
 noise_ratio=0
-decay=0.9
+decay=0.5
 output=uniform_n1p2/
 a=-1
 b=2
@@ -34,5 +34,8 @@ graph4:
 	mkdir -p $(output)/$@/
 	./solver 20000 	0.1 			0.04 	0.12 	2 				0 			10000 		0.9 	-1		2		$(output)/$@/ 	graph4.meta
 
-draw_graph1:
+draw_graph:
 	python graph1.py
+	python graph2.py
+	python graph3.py
+	python graph4.py

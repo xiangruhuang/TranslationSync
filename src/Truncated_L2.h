@@ -68,7 +68,7 @@ class Truncated_L2 : public Solver{
             double max_diff = 0.0;
             double sum_diff = 0.0;
             vector<int> remove_list;
-            while (delta_x > 1e-5 && !disconnected){
+            while (delta_x > 1e-3 && !disconnected){
                 inner++;
                 max_diff = 0.0;
                 up = 0.0;
@@ -76,7 +76,7 @@ class Truncated_L2 : public Solver{
                     int d_i = 0.0;
                     double weighted_sum = 0.0;
                     remove_list.clear();
-                    for (vector<pair<double, int>>::const_iterator it_i = v[i].cbegin(); it_i != v[i].cend(); it_i++){
+                    for (vector<pair<double, int>>::const_iterator it_i = v[i].begin(); it_i != v[i].end(); it_i++){
                         int j = it_i->second;
                         double t_ij = it_i->first;
                         //cerr << "i=" << i << ", j=" << j << ", t_ij=" << t_ij << endl;
@@ -98,7 +98,7 @@ class Truncated_L2 : public Solver{
                     }
                     if (d_i == 0){
                         disconnected = true;
-                        continue;
+                        break;
                     }
                     //cerr << "weighted_sum=" << weighted_sum << ", d_i=" << d_i << endl;
                     new_x[i] = weighted_sum / d_i;

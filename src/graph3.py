@@ -13,7 +13,7 @@ def plot_coords(ax, ob):
     x, y = ob.xy
     ax.plot(x, y, '+', color='grey')
 
-folder = 'uniform_n1p2/graph1_final/'
+folder = 'uniform_n1p2/graph3_final/'
 print("drawing figure with data under %s" % folder)
 
 min_TL2 = []
@@ -117,8 +117,8 @@ ax.add_patch(patch)
 patch = PolygonPatch(solution, facecolor='r', edgecolor='r')
 ax.add_patch(patch)
 
-for label in ['min CD', 'median CD', 'max CD', 'min TranSync', 'median TranSync',
-        'max TranSync']:
+for label in ['min CD', 'median CD', 'max CD', 'min TranSync', 
+        'median TranSync','max TranSync']:
     ax.plot(ratios, plots[label], color=colors[label], label=label,
             linestyle=linestyles[label], linewidth=linewidths[label],
             marker=markers[label])
@@ -126,10 +126,10 @@ for label in ['min CD', 'median CD', 'max CD', 'min TranSync', 'median TranSync'
 #ax.fill_between(ratios, min_CD, max_CD, facecolor=colors['median_CD'], interpolate=True)
 #ax.fill_between(ratios, min_TL2, max_TL2, facecolor=colors['median_TL2'], interpolate=True)
 
-legend = ax.legend(loc=(0.55, 0.55), shadow=True, fontsize=15)
-plt.title('Graph $G_{dr}$', fontsize=40)
+legend = ax.legend(loc=(0.03, 0.03), shadow=True, fontsize=15)
+plt.title('Graph $G_{sr}$', fontsize=40)
 plt.xlabel('$p$', fontsize=25)
 plt.ylabel('$\|x^*-x^{gt}\|_{\infty}$', fontsize=25)
-plt.axis([0.01, 1.0, 0, 1])
-plt.savefig('graph1.eps')
+plt.axis([0.01, 1.0, 0, 1.8])
+plt.savefig('graph3.eps')
 

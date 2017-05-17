@@ -44,7 +44,7 @@ int main(int argc, char** argv){
         time_TL2.push_back(t);
         time_CD.push_back(t);
     }
-    for (int nr = 0; nr < P; nr++){
+    for (int nr = 60; nr < P; nr++){
         params->noise_ratio = nr*1.0/P;
         string nr_str = to_string(nr);
         #pragma omp parallel for
@@ -74,7 +74,8 @@ int main(int argc, char** argv){
         //double zp_TL2 = zero_prob(result_TL2);
         //double zp_CD = zero_prob(result_CD);
         cerr << "noise_ratio=" << params->noise_ratio << ", TL2=(" << min(result_TL2) << "," << median(result_TL2) << "," << max(result_TL2) << ")";
-        cerr << ", CD=(" << min(result_CD) << "," << median(result_CD) << "," << max(result_CD) << ")" << endl;
+        cerr << ", CD=(" << min(result_CD) << "," << median(result_CD) << "," << max(result_CD) << ")";
+        cerr << ", time mean: TL2=" << mean(time_TL2) << ", CD=" << mean(time_CD) << endl;
         fout.close();
     } 
     
