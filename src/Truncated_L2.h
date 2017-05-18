@@ -153,7 +153,7 @@ class Truncated_L2 : public Solver{
             fout << ", outer_delta_x=" << outer_delta_x;
             fout << ", elapsed_time=" << (omp_get_wtime() - start_time);
             fout << endl;
-            if (fabs(outer_delta_x) < 1e-6){
+            if (fabs(outer_delta_x) < 1e-5){
                 count_down++;
             } else {
                 count_down = 0;

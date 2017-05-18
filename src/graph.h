@@ -87,7 +87,7 @@ class Params{
     }
 
     double noise(){
-        normal_distribution<double> small_noise(0.0, 0.0);
+        normal_distribution<double> small_noise(0.0, 0.01);
         normal_distribution<double> gaussian(a, b);
         uniform_real_distribution<double> uniform(a, b);
         uniform_real_distribution<double> dice(0.0, 1.0);
