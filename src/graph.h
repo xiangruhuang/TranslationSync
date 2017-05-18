@@ -90,20 +90,12 @@ class Params{
     }
 
     double noise(){
-        normal_distribution<double> small_noise(0.0, sigma);
-        normal_distribution<double> gaussian(a, b);
+        uniform_real_distribution<double> small_noise(-sigma, sigma);
         uniform_real_distribution<double> uniform(a, b);
         uniform_real_distribution<double> dice(0.0, 1.0);
         double noise = small_noise(generator);
         if (dice(generator) <= noise_ratio){
-            if (noise_type == 1){
-                //gaussian
-                noise = gaussian(generator);
-            }
-            if (noise_type == 2){
-                //uniform
-                noise = uniform(generator);
-            }
+            noise = uniform(generator);
         }
         return noise;    
     }
