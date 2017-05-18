@@ -44,7 +44,7 @@ int main(int argc, char** argv){
         time_TL2.push_back(t);
         time_CD.push_back(t);
     }
-    for (int nr = 80; nr < P; nr++){
+    for (int nr = 0; nr < P; nr++){
         params->noise_ratio = nr*1.0/P;
         string nr_str = to_string(nr);
         #pragma omp parallel for
@@ -60,7 +60,6 @@ int main(int argc, char** argv){
             double time1 = -omp_get_wtime();
             double r1 = TL.solve(graph_t, output_name+"/ratio"+nr_str+"_"+str+".TL2");
             time1 += omp_get_wtime();
-
 
             result_TL2[t] = r1;
             time_TL2[t] = time1;

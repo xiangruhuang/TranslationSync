@@ -81,9 +81,8 @@ class CoordinateDescent : public Solver{
             }
             double loss = linf_loss(n, x, graph.x);
 
-            if (loss + 1e-5 < min_loss){
+            if (loss < min_loss){
                 min_loss = loss;
-                //last_update = omp_get_wtime();
             }
 
             elapsed_time = (omp_get_wtime() - start_time);

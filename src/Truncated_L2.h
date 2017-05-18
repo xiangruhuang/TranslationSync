@@ -64,10 +64,12 @@ class Truncated_L2 : public Solver{
                 d[j]++;
             }
         }
+        int edges_remain = 0;
         for (int i = 0; i < n; i++){
             down += sqrt(d[i]);
+            edges_remain += d[i];
         }
-        while (iter++ < max_iter && !disconnected){
+        while (iter++ < max_iter && (edges_remain >= 2*(n-1)) && (!disconnected)){
             double delta_x = 1e100;
             int inner = 0;
             double max_diff = 0.0;
@@ -77,7 +79,7 @@ class Truncated_L2 : public Solver{
                 old_x[i] = x[i];
             }
             int count_down = 0;
-            while (delta_x > 1e-2 && !disconnected){
+            while (delta_x > 1e-2 && (!disconnected) && (edges_remain >= 2*(n-1))){
                 inner++;
                 max_diff = 0.0;
                 up = 0.0;
@@ -104,6 +106,7 @@ class Truncated_L2 : public Solver{
                         int to_remove = remove_list[k];
                         v[i][to_remove] = v[i][v[i].size()-1];
                         v[i].pop_back();
+			            edges_remain--;
                     }
                     if (d_i == 0){
                         disconnected = true;
@@ -125,7 +128,10 @@ class Truncated_L2 : public Solver{
             }
 
             //maintain and output
-            if (iter == 1){
+            //if (iter == 1){
+            //    threshold = max_diff;
+            //}
+            if (threshold > max_diff){
                 threshold = max_diff;
             }
             threshold = threshold * decay;
