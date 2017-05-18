@@ -1,44 +1,126 @@
-import re
-import math
-def readData(filename):
-	fin = open(filename, 'r')
-	data = []
-	for l in fin.readlines():
-		num_list = [float(num) for num in re.split(' |\t', l.strip())]
-		data.append(num_list)
-	return data
+import numpy
+import os
 
-def parse_args(args):	
-	filenames=args[0:]
-	print filenames
-	output_fig = args[0].split('.')[0]
-	labels = []
-	for filename in filenames[1:]:
-		label = filename.split('/')[-1].split('.')[0]
-		labels.append(label)
-		#output_fig = output_fig + '_' + label
-	print 'output figure file=',output_fig
-	filelist = filenames[1:]
-	print 'filelist=', filelist
-	return output_fig, labels, filelist
+def process(folder):
+    min_TL2 = []
+    median_TL2 = []
+    max_TL2 = []
 
-def exit_with_help():
-	print "python <dataset name>.py <dataset name>/ratio<ratio>_<eid>.<algo>"
-	exit()
+    min_CD = []
+    median_CD = []
+    max_CD = []
 
-def process(data):
-	#goal less than 10 points
-	lastgap = 100
-	lastx = 1e-10
-	eps=(math.log(data[-1][0]) - math.log(data[0][0]))/15
-	indices=[]
-	for i in range(len(data)):
-		d = data[i]
-		if (d[1] < lastgap and (math.log(d[0])-math.log(lastx) > eps or len(data) < 10)):
-			indices.append(i)
-			lastgap = d[1]
-			lastx = d[0]
-		elif (i == len(data)-1):
-			indices.append(i)
-	print indices
-	return data[indices]
+    tmean_TL2 = []
+    tmean_CD = []
+
+    zp_TL2 = []
+    zp_CD = []
+    ratios = range(100)
+    for ratio in ratios:
+        ml_TL2 = []
+        time_TL2 = []
+        ml_CD = []
+        time_CD = []
+        with open(folder+'/ratio'+str(ratio)+'_summary', 'r') as fin:
+            lines = fin.readlines()
+            assert len(lines) == 100
+            for line in lines:
+                vals = [float(token) for token in line.strip().split(' ')]
+                ml_TL2.append(vals[0])
+                time_TL2.append(vals[1])
+                ml_CD.append(vals[2])
+                time_CD.append(vals[3]) 
+        if len(ml_TL2) > 0 and len(ml_CD) > 0:
+            min_TL2.append(min(ml_TL2))
+            median_TL2.append(numpy.median(ml_TL2))
+            max_TL2.append(max(ml_TL2))
+            min_CD.append(min(ml_CD))
+            median_CD.append(numpy.median(ml_CD))
+            max_CD.append(max(ml_CD))
+            zp_TL2.append(len([e for e in ml_TL2 if abs(e) < 1e-2])/100.0)
+            zp_CD.append(len([e for e in ml_CD if abs(e) < 1e-2])/100.0)
+            tmean_CD.append(numpy.mean(time_CD))
+            tmean_TL2.append(numpy.mean(time_TL2))
+
+    ratios = [1.0-ratio/100.0 for ratio in ratios]
+    return min_TL2, median_TL2, max_TL2, min_CD, median_CD, max_CD, tmean_TL2, \
+tmean_CD, zp_TL2, zp_CD, ratios
+
+def process_in_details(folder):
+    min_TL2 = []
+    median_TL2 = []
+    max_TL2 = []
+
+    min_CD = []
+    median_CD = []
+    max_CD = []
+
+    tmean_TL2 = []
+    tmean_CD = []
+
+    zp_TL2 = []
+    zp_CD = []
+    ratios = range(100)
+    for ratio in ratios:
+        ml_TL2 = []
+        time_TL2 = []
+        ml_CD = []
+        time_CD = []
+        for eid in range(100):
+            name_TL2 = folder+'/ratio'+str(ratio)+'_'+str(eid)+'.TL2'
+            name_CD = folder+'/ratio'+str(ratio)+'_'+str(eid)+'.CD'
+            if os.path.isfile(name_TL2) and os.path.isfile(name_CD):
+                with open(name_TL2) as fin:
+                    lines = fin.readlines()
+                    min_loss=1e100
+                    time=0.0
+                    for line in lines:
+                        ml = 0.0
+                        t = 0.0
+                        for token in line.strip().split(', '):
+                            if token.startswith('min_loss'):
+                                ml = float(token.split('=')[1])
+                            if token.startswith('elapsed'):
+                                t = float(token.split('=')[1])
+                        if min_loss > ml:
+                            min_loss = ml
+                            time = t
+                        if min_loss < 1e-5:
+                            break
+                    ml_TL2.append(min_loss)
+                    time_TL2.append(time)
+
+                with open(name_CD) as fin:
+                    lines = fin.readlines()
+                    min_loss=1e100
+                    time=0.0
+                    for line in lines:
+                        ml = 0.0
+                        t = 0.0
+                        for token in line.strip().split(', '):
+                            if token.startswith('min_loss'):
+                                ml = float(token.split('=')[1])
+                            if token.startswith('elapsed'):
+                                t = float(token.split('=')[1])
+                        if min_loss > ml:
+                            min_loss = ml
+                            time = t
+                        if min_loss < 1e-5:
+                            break
+                    ml_CD.append(min_loss)
+                    time_CD.append(time)
+        if len(ml_TL2) > 0 and len(ml_CD) > 0:
+            min_TL2.append(min(ml_TL2))
+            median_TL2.append(numpy.median(ml_TL2))
+            max_TL2.append(max(ml_TL2))
+            min_CD.append(min(ml_CD))
+            median_CD.append(numpy.median(ml_CD))
+            max_CD.append(max(ml_CD)) 
+            zp_TL2.append(len([e for e in ml_TL2 if abs(e) < 1e-2])/100.0)
+            zp_CD.append(len([e for e in ml_CD if abs(e) < 1e-2])/100.0)
+            tmean_CD.append(numpy.mean(time_CD))
+            tmean_TL2.append(numpy.mean(time_TL2))
+    
+    ratios = [1.0-ratio/100.0 for ratio in ratios]
+    return min_TL2, median_TL2, max_TL2, min_CD, median_CD, max_CD, tmean_TL2, \
+tmean_CD, zp_TL2, zp_CD, ratios

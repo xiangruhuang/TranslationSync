@@ -26,6 +26,10 @@ class Truncated_L2 : public Solver{
         this->max_iter = params->max_iter;
         this->decay = params->decay;
     }
+    Truncated_L2(int max_iter, double decay){
+        this->max_iter = max_iter;
+        this->decay = decay;
+    }
 
     inline double solve(Graph& graph, string filename){
         ofstream fout(filename);
@@ -38,6 +42,7 @@ class Truncated_L2 : public Solver{
             x[i] = graph.x0[i];
         }
         double* new_x = new double[n];
+        double* old_x = new double[n];
         int iter = 0;
         double min_loss = 1e100;
         int* index = new int[n];
@@ -68,7 +73,11 @@ class Truncated_L2 : public Solver{
             double max_diff = 0.0;
             double sum_diff = 0.0;
             vector<int> remove_list;
-            while (delta_x > 1e-3 && !disconnected){
+            for (int i = 0; i < n; i++){
+                old_x[i] = x[i];
+            }
+            int count_down = 0;
+            while (delta_x > 1e-2 && !disconnected){
                 inner++;
                 max_diff = 0.0;
                 up = 0.0;
@@ -125,15 +134,25 @@ class Truncated_L2 : public Solver{
             if (loss < min_loss){
                 min_loss = loss;
             }
+            double outer_delta_x = 0.0;
+            for (int i = 0; i < n; i++){
+                outer_delta_x += (x[i] - old_x[i]);
+            }
             fout << "iter=" << iter;
             fout << ", #inner=" << inner;
             fout << ", linf_loss=" << loss;
             fout << ", l1_loss=" << l1_loss(n, x, graph.x);
             fout << ", min_loss=" << min_loss;
             fout << ", threshold=" << threshold;
+            fout << ", outer_delta_x=" << outer_delta_x;
             fout << ", elapsed_time=" << (omp_get_wtime() - start_time);
             fout << endl;
-            if (fabs(min_loss) < 1e-6){
+            if (fabs(outer_delta_x) < 1e-6){
+                count_down++;
+            } else {
+                count_down = 0;
+            }
+            if (count_down >= 3){
                 break;
             }
         }

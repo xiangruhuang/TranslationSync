@@ -21,6 +21,9 @@ class CoordinateDescent : public Solver{
     CoordinateDescent(Params* params){
         this->max_iter = params->max_iter;
     }
+    CoordinateDescent(int max_iter){
+        this->max_iter = max_iter;
+    }
 
     inline double solve(Graph& graph, string filename){
         ofstream fout(filename);
@@ -58,6 +61,7 @@ class CoordinateDescent : public Solver{
                     c.push_back(x[j] + t_ij);
                 }
                 int middle_point = c.size() / 2;
+                assert(c.size() != 0);
                 nth_element(c.begin(), c.begin()+middle_point, c.end());
                 double new_x = c[middle_point];
                 if (c.size() % 2 == 0){
@@ -77,9 +81,9 @@ class CoordinateDescent : public Solver{
             }
             double loss = linf_loss(n, x, graph.x);
 
-            if (loss < min_loss){
+            if (loss + 1e-5 < min_loss){
                 min_loss = loss;
-                last_update = omp_get_wtime();
+                //last_update = omp_get_wtime();
             }
 
             elapsed_time = (omp_get_wtime() - start_time);
@@ -87,9 +91,10 @@ class CoordinateDescent : public Solver{
             fout << ", linf_loss=" << loss;
             fout << ", l1_loss=" << l1_loss(n, x, graph.x);
             fout << ", min_loss=" << min_loss;
+            fout << ", delta_x=" << delta_x;
             fout << ", elapsed_time=" << elapsed_time;
             fout << endl;
-            if (fabs(min_loss) < 1e-6 || fabs(delta_x) < 1e-6 || (omp_get_wtime() - last_update > 10.0)){
+            if (fabs(delta_x) < 1e-6){
                 break;
             }
         }

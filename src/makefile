@@ -1,5 +1,6 @@
 all:
 	g++ -o solver main.cpp -O3 -std=c++11 -fopenmp
+	g++ -o artsquad artsquad.cpp -O3 -std=c++11 -fopenmp
 
 n=2000
 edge_density=0.2
@@ -20,7 +21,7 @@ synthetic:
 
 graph1:
 	mkdir -p $(output)/$@/
-	./solver 2000 	0.1 			1.0 	0.0 	2 				0 			10000 		0.9 	-1		2		$(output)/$@/	graph1.meta
+	./solver 2000 	0.1 			1.0 	0.0 	2 				0 			10000 		0.8 	-1		2		$(output)/$@/	graph1.meta
 
 graph2:
 	mkdir -p $(output)/$@/
@@ -35,7 +36,19 @@ graph4:
 	./solver 20000 	0.1 			0.04 	0.12 	2 				0 			10000 		0.9 	-1		2		$(output)/$@/ 	graph4.meta
 
 draw_graph:
-	python graph1.py
-	python graph2.py
-	python graph3.py
-	python graph4.py
+	python graph.py 1 graph
+	python graph.py 2 graph
+	python graph.py 3 graph
+	python graph.py 4 graph
+
+draw_time:
+	python graph.py 1 time
+	python graph.py 2 time
+	python graph.py 3 time
+	python graph.py 4 time
+
+draw_zp:
+	python graph.py 1 zp
+	python graph.py 2 zp
+	python graph.py 3 zp
+	python graph.py 4 zp

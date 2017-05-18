@@ -44,7 +44,7 @@ int main(int argc, char** argv){
         time_TL2.push_back(t);
         time_CD.push_back(t);
     }
-    for (int nr = 60; nr < P; nr++){
+    for (int nr = 80; nr < P; nr++){
         params->noise_ratio = nr*1.0/P;
         string nr_str = to_string(nr);
         #pragma omp parallel for

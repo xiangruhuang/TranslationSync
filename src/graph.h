@@ -40,6 +40,10 @@ class Params{
     int max_iter = 1000;
     double decay = 0.9;
 
+    Params(){
+
+    }
+
     Params(int argc, char** argv){
         n = atoi(argv[1]);
         p = atof(argv[2]);
