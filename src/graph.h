@@ -33,6 +33,7 @@ class Params{
     
     //sample specific parameters:
     double a, b;
+    double sigma;
     
     default_random_engine generator;
 
@@ -61,10 +62,11 @@ class Params{
         
         a = atof(argv[9]);
         b = atof(argv[10]);
+        sigma = atof(argv[11]);
 
-        if (argc > 12){
+        if (argc > 13){
             load_graph = true;
-            graph_file_name = argv[12];
+            graph_file_name = argv[13];
         } else {
             load_graph = false;
         }
@@ -78,6 +80,7 @@ class Params{
         cerr << ", incremental=" << inc;
         cerr << ", noise_type=" << noise_type;
         cerr << ", noise_ratio=" << noise_ratio;
+        cerr << ", sigma=" << sigma;
         cerr << ", noise_parameters=(" << a << "," << b << ")";
         cerr << endl;
     }
@@ -87,7 +90,7 @@ class Params{
     }
 
     double noise(){
-        normal_distribution<double> small_noise(0.0, 0.01);
+        normal_distribution<double> small_noise(0.0, sigma);
         normal_distribution<double> gaussian(a, b);
         uniform_real_distribution<double> uniform(a, b);
         uniform_real_distribution<double> dice(0.0, 1.0);

@@ -14,8 +14,8 @@
 using namespace std;
 
 int main(int argc, char** argv){
-    if (argc <= 11){
-        cerr << "./TranSync [n] [edge_density] [bias] [inc] [noise_type] [noise_ratio] [max_iter] [decay] [a/mean] [b/std_dev] [output_name] (graph_file)" << endl;
+    if (argc <= 12){
+        cerr << "./TranSync [n] [edge_density] [bias] [inc] [noise_type] [noise_ratio] [max_iter] [decay] [a/mean] [b/std_dev] [sigma] [output_name] (graph_file)" << endl;
         return 0;
     }
     auto seed = time(NULL);
@@ -30,7 +30,7 @@ int main(int argc, char** argv){
 
     CoordinateDescent CD(params);
   
-    string output_name(argv[11]);
+    string output_name(argv[12]);
     vector<double> result_TL2;
     vector<double> result_CD;
     vector<double> time_TL2;
