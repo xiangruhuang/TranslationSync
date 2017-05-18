@@ -93,7 +93,7 @@ class CoordinateDescent : public Solver{
             fout << ", delta_x=" << delta_x;
             fout << ", elapsed_time=" << elapsed_time;
             fout << endl;
-            if (fabs(delta_x) < 1e-5){
+            if (fabs(delta_x) < 1e-6){
                 break;
             }
         }
