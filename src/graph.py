@@ -11,13 +11,13 @@ from descartes import PolygonPatch
 from utils import *
 
 
-folder = 'uniform_n1p2/graph'+sys.argv[1]+''
+folder = 'uniform_n1p2_'+sys.argv[1]+'/graph'+sys.argv[2]+'_final'
 print("drawing figure with data under %s" % folder)
 
 min_TL2, median_TL2, max_TL2, min_CD, median_CD, max_CD, tmean_TL2, tmean_CD, \
         zp_TL2, zp_CD, ratios = process(folder)
 
-if sys.argv[2].startswith('graph'):
+if sys.argv[3].startswith('graph'):
     plots = {'min CD':min_CD, 'median CD':median_CD, 'max CD':max_CD,
             'min TranSync':min_TL2, 'median TranSync':median_TL2, 
             'max TranSync':max_TL2}
@@ -56,12 +56,13 @@ if sys.argv[2].startswith('graph'):
     
     gs = setting_map[folder.split('/')[-1]]
     legend = ax.legend(loc=gs['loc_g'], shadow=True, fontsize=gs['fs_g'])
-    plt.title(gs['title'], fontsize=40)
+    plt.title(gs['title']+' ($\sigma = %s$)' % str(sys.argv[1]), fontsize=40)
+    ax.set_yscale('log')
     plt.xlabel('$p$', fontsize=25)
-    plt.ylabel('$\|x^*-x^{gt}\|_{\infty}$', fontsize=25)
+    plt.ylabel('$\log \|x^*-x^{gt}\|_{\infty}$', fontsize=25)
     plt.axis([0.01, 1.0, 0, gs['max_diff']])
-    plt.savefig('graph'+str(gs['id'])+'.eps')
-elif sys.argv[2].startswith('time'):
+    plt.savefig('graph'+str(gs['id'])+'s0'+sys.argv[1].split('.')[-1]+'.eps')
+elif sys.argv[3].startswith('time'):
     fig, ax = plt.subplots()
     plots = {'CD' : tmean_CD, 'TranSync':tmean_TL2}
     for label in ['CD', 'TranSync']:
@@ -71,11 +72,11 @@ elif sys.argv[2].startswith('time'):
     
     gs = setting_map[folder.split('/')[-1]]
     legend = ax.legend(loc=gs['loc_t'], shadow=True, fontsize=gs['fs_t'])
-    plt.title(gs['title'], fontsize=40)
+    plt.title(gs['title']+' ($\sigma = %s$)' % str(sys.argv[1]), fontsize=40)
     plt.xlabel('$p$', fontsize=25)
     plt.ylabel('Average Running Time', fontsize=25)
     plt.axis([0.01, 1.0, 0, gs['max_time']])
-    plt.savefig('time'+str(gs['id'])+'.eps')
+    plt.savefig('time'+str(gs['id'])+'s0'+sys.argv[1].split('.')[-1]+'.eps')
 else:
     fig, ax = plt.subplots()
     plots = {'CD' : zp_CD, 'TranSync':zp_TL2}
@@ -86,7 +87,7 @@ else:
     
     gs = setting_map[folder.split('/')[-1]]
     legend = ax.legend(loc=gs['loc_t'], shadow=True, fontsize=gs['fs_t'])
-    plt.title(gs['title'], fontsize=40)
+    plt.title(gs['title']+' ($\sigma = %s$)' % str(sys.argv[1]), fontsize=40)
     plt.xlabel('$p$', fontsize=25)
     plt.ylabel('Success Rate of Exact Recovery', fontsize=15)
     plt.axis([0.01, 1.0, 0, 1.0])

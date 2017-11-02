@@ -97,6 +97,9 @@ class CoordinateDescent : public Solver{
                 break;
             }
         }
+        for (int i = 0; i < n; i++){
+            fout << x[i] << endl;
+        }
         fout.close();
         delete d;
         delete x;

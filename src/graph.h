@@ -34,7 +34,8 @@ class Params{
     //sample specific parameters:
     double a, b;
     double sigma;
-    
+    double stopping;
+
     default_random_engine generator;
 
     //solver specific parameters:
@@ -63,6 +64,7 @@ class Params{
         a = atof(argv[9]);
         b = atof(argv[10]);
         sigma = atof(argv[11]);
+        stopping = atof(argv[14]);
 
         if (argc > 13){
             load_graph = true;
@@ -82,6 +84,7 @@ class Params{
         cerr << ", noise_ratio=" << noise_ratio;
         cerr << ", sigma=" << sigma;
         cerr << ", noise_parameters=(" << a << "," << b << ")";
+        cerr << ", stopping=" << stopping;
         cerr << endl;
     }
 
@@ -128,6 +131,7 @@ class Graph{
         x0 = new double[n];
         for (int i = 0; i < n; i++){
             x[i] = params->ground_truth();
+            x0[i] = i;
         }
         adj = new vector<pair<double, int>>[n];
 

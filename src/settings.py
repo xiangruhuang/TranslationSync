@@ -14,14 +14,22 @@ markers = {'min CD':'', 'median CD':'', 'max CD':'',
         'min TranSync':'', 'median TranSync':'', 'max TranSync':'','CD':'',
         'TranSync':''}
 
-graph1 = {'id':1, 'loc_g':(0.55, 0.55), 'loc_t':(0.4, 0.55), 'fs_g':15,
-        'fs_t':30, 'title':'Graph $G_{dr}$', 'max_diff':1, 'max_time':3}
-graph2 = {'id':2, 'loc_g':(0.55, 0.55), 'loc_t':(0.4, 0.55), 'fs_g':15,
-        'fs_t':30, 'title':'Graph $G_{di}$', 'max_diff':1, 'max_time':3}
-graph3 = {'id':3, 'loc_g':(0.01, 0.01), 'loc_t':(0.03, 0.03), 'fs_g':15,
-        'fs_t':15, 'title':'Graph $G_{sr}$', 'max_diff':2.0, 'max_time':12}
-graph4 = {'id':4, 'loc_g':(0.01, 0.01), 'loc_t':(0.03, 0.03), 'fs_g':15,
-        'fs_t':15, 'title':'Graph $G_{si}$', 'max_diff':2.8, 'max_time':12}
+#graph1 = {'id':1, 'loc_g':(0.45, 0.45), 'loc_t':(0.3, 0.55), 'fs_g':19,
+#        'fs_t':36, 'title':'Graph $G_{dr}$', 'max_diff':1, 'max_time':3}
+#graph2 = {'id':2, 'loc_g':(0.57, 0.57), 'loc_t':(0.3, 0.55), 'fs_g':15,
+#        'fs_t':36, 'title':'Graph $G_{di}$', 'max_diff':1, 'max_time':4}
+#graph3 = {'id':3, 'loc_g':(0.03, 0.13), 'loc_t':(0.03, 0.23), 'fs_g':20,
+#        'fs_t':25, 'title':'Graph $G_{sr}$', 'max_diff':2.0, 'max_time':18}
+#graph4 = {'id':4, 'loc_g':(0.03, 0.13), 'loc_t':(0.03, 0.13), 'fs_g':24,
+#        'fs_t':30, 'title':'Graph $G_{si}$', 'max_diff':2.8, 'max_time':15}
+graph1 = {'id':1, 'loc_g':(0.45, 0.45), 'loc_t':(0.37, 0.55), 'fs_g':19,
+        'fs_t':33, 'title':'Graph $G_{dr}$', 'max_diff':1, 'max_time':3}
+graph2 = {'id':2, 'loc_g':(0.57, 0.57), 'loc_t':(0.3, 0.55), 'fs_g':15,
+        'fs_t':36, 'title':'Graph $G_{di}$', 'max_diff':1, 'max_time':4}
+graph3 = {'id':3, 'loc_g':(0.03, 0.13), 'loc_t':(0.03, 0.23), 'fs_g':20,
+        'fs_t':25, 'title':'Graph $G_{sr}$', 'max_diff':2.0, 'max_time':18}
+graph4 = {'id':4, 'loc_g':(0.03, 0.03), 'loc_t':(0.03, 0.13), 'fs_g':24,
+        'fs_t':36, 'title':'Graph $G_{si}$', 'max_diff':2.8, 'max_time':15}
 setting_map = {'graph1':graph1,
         'graph1_final':graph1, 'graph2_final':graph2, 'graph3_final':graph3,
         'graph4_final':graph4}
